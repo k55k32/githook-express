@@ -3,7 +3,6 @@ var qs = require('querystring')
 var http = require('http')
 var url = require('url')
 var bodyParser = require('./lib/body-parser')  //
-var crypto = require('crypto')
 var utils = require('./lib/utils.js')
 
 
