@@ -25,11 +25,11 @@ app.use(function(req, res, next){
       console.log('>>>req on')
       reqData.push(data)
       size += data.length
-    });
-    req.on('end', function () {
-        req.reqData = Buffer.concat(reqData, size)
     })
-    next()
+    req.on('end', function () {
+      req.reqData = Buffer.concat(reqData, size)
+      next()
+    })
 })
 
 app.use(bodyParser.json())
