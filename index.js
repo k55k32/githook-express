@@ -3,11 +3,26 @@ var qs = require('querystring')
 var http = require('http')
 var url = require('url')
 var bodyParser = require('body-parser')
+var crypto = require('crypto')
 
 var app = express()
 
-// app.use(bodyParser.json())
+function HMacSha1 (secret, body) {
+  var sign = crypto.createHmac('sha1', secret).update(body).digest().toString('hex')
+  console.log('shastr:', sign)
+  return sign
+}
 
+function vaildHMAC (key, body, sign) {
+  var shaStr = HMacSha1(key, body)
+  return shaStr === sign
+}
+
+// app.use(bodyParser.json())
+var args="app_id=123&access_token=abc";
+        var app_secret="123456";
+        var sign=crypto.createHmac('sha1', app_secret).update(args).digest().toString('base64');
+        console.log(sign);
 app.all('*', (request, response, next) => {
   console.log('requestpath:', request.path)
   console.log('requestbody:', request.body)
@@ -23,8 +38,13 @@ app.post('/github/webhook', function (req, res) {
   console.log('event:', eventName)
   console.log('sign:', sign)
   console.log('delivery', delivery)
+  if (vaildHMAC(hookSecret, req.body, sign)) {
+    console.log('vaild - success')
+  }
   res.end()
 })
+
+
 
 var server = app.listen(9000, function () {
   var host = server.address().address;
