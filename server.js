@@ -27,8 +27,10 @@ module.exports = (port, config) => {
     console.log('event:', eventName)
     console.log('sign:', sign)
     console.log('delivery', delivery)
-    var repositoryUrl = req.body.url
+    var repositoryUrl = req.body.repository.url
+    console.log('repositoryUrl: ', repositoryUrl)
     var executer = config[repositoryUrl]
+    console.log('executer: ', executer)
     if (executer) {
       var secret = executer.secret
       var shell = executer.events[eventName]
