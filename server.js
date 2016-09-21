@@ -2,18 +2,14 @@ var express = require('express')
 var qs = require('querystring')
 var http = require('http')
 var url = require('url')
-var bodyParser = require('./src/body-parser')  //
+var bodyParser = require('./lib/body-parser')  //
 var crypto = require('crypto')
+var utils = require('./lib/utils.js')
 
 
-function HMacSha1 (secret, body) {
-  var sign = crypto.createHmac('sha1', secret).update(body).digest().toString('hex')
-  return sign
-}
 
 function vaildHMAC (key, body, sign) {
-  var shaStr = 'sha1=' + HMacSha1(key, body)
-  console.log('vaildShaStr: ', shaStr)
+  var shaStr = 'sha1=' + utils.HMacSha1(key, body)
   return shaStr === sign
 }
 
@@ -22,7 +18,6 @@ module.exports = (port, secret) => {
   app.use(bodyParser.json())
   app.all('*', (request, response, next) => {
     console.log('requestpath:', request.path)
-    console.log('requestbody:', request.body)
     next()
   })
 
