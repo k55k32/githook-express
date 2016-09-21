@@ -6,13 +6,15 @@ var bodyParser = require('body-parser')
 
 var app = express()
 
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
+
 app.all('*', (request, response, next) => {
   console.log('requestpath:', request.path)
-  console.log('requestbody:', request.headers)
+  console.log('requestbody:', request.body)
   next()
 })
 
+var hookSecret = 'testtest'
 app.post('/github/webhook', function (req, res) {
   var eventName = req.get('X-GitHub-Event')
   var sign = req.get('X-Hub-Signature')
@@ -21,7 +23,6 @@ app.post('/github/webhook', function (req, res) {
   console.log('event:', eventName)
   console.log('sign:', sign)
   console.log('delivery', delivery)
-  var body = req.body
   res.end()
 })
 
