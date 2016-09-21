@@ -35,8 +35,12 @@ module.exports = (port, config) => {
     if (executer) {
       var secret = executer.secret
       var shell = executer.events[eventName]
-      if (shell && vaildHMAC(secret, req._body, sign)) { // 如果有该事件的shell，则继续执行并且签名通过
-        console.log(shell)
+      if (shell) { // 如果有该事件的shell，则继续执行并且签名通过
+        if (vaildHMAC(secret, req._body, sign)) {
+          console.log(shell)
+        } else {
+          console.log('vaild sha1 error: ',secret , sign);
+        }
       } else {
         console.log('not event target: ', eventName)
       }
