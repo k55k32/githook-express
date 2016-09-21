@@ -3,7 +3,6 @@ var Server = require('./server.js')
 program
   .version('0.0.1')
   .option('-s, --start <port> <secret>', 'start server and set the port,secret', start)
-  .option('-p, --stop', 'stop server', 'marble', stop)
   .parse(process.argv)
 
 
