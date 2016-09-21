@@ -2,7 +2,7 @@ var express = require('express')
 var qs = require('querystring')
 var http = require('http')
 var url = require('url')
-var bodyParser = require('body-parser')
+var bodyParser = require('./body-parser')
 var crypto = require('crypto')
 
 var app = express()
@@ -18,20 +18,6 @@ function vaildHMAC (key, body, sign) {
   return shaStr === sign
 }
 
-app.use(function(req, res, next){
-    var reqData = []
-    var size = 0
-    req.on('data', function (data) {
-      console.log('>>>req on')
-      reqData.push(data)
-      size += data.length
-    })
-    req.on('end', function () {
-      req.reqData = Buffer.concat(reqData, size)
-      next()
-    })
-})
-
 app.use(bodyParser.json())
 app.all('*', (request, response, next) => {
   console.log('requestpath:', request.path)
@@ -45,11 +31,11 @@ app.post('/github/webhook', function (req, res) {
   var sign = req.get('X-Hub-Signature')
   var delivery = req.get('X-GitHub-Delivery')
   console.log('request head')
-  console.log('reqData:', reqData)
+  console.log('request_body: ', req._body)
   console.log('event:', eventName)
   console.log('sign:', sign)
   console.log('delivery', delivery)
-  if (vaildHMAC(hookSecret, req.reqData, sign)) {
+  if (vaildHMAC(hookSecret, req._body, sign)) {
     console.log('vaild - success')
   }
   res.end()
