@@ -12,14 +12,13 @@ function vaildHMAC (key, body, sign) {
   return shaStr === sign
 }
 
-module.exports = (port, secret) => {
+module.exports = (port, config) => {
   var app = express()
   app.use(bodyParser.json())
   app.all('*', (request, response, next) => {
     console.log('requestpath:', request.path)
     next()
   })
-
   app.post('/github/webhook', function (req, res) {
     var eventName = req.get('X-GitHub-Event')
     var sign = req.get('X-Hub-Signature')
@@ -28,8 +27,16 @@ module.exports = (port, secret) => {
     console.log('event:', eventName)
     console.log('sign:', sign)
     console.log('delivery', delivery)
-    if (vaildHMAC(secret, req._body, sign)) {
-      console.log('vaild - success')
+    var repositoryUrl = req.body.url
+    var executer = config[repositoryUrl]
+    if (executer) {
+      var secret = executer.secret
+      var shell = executer.events[eventName]
+      if (shell && vaildHMAC(secret, req._body, sign)) { // 如果有该事件的shell，则继续执行并且签名通过
+        console.log(shell)
+      } else {
+        console.log('not event target: ', eventName)
+      }
     }
     res.end()
   })
@@ -37,7 +44,6 @@ module.exports = (port, secret) => {
     var host = server.address().address;
     var port = server.address().port;
     console.log('app listening at http://%s:%s', host, port);
-    console.log('app secret is ', secret)
   });
   return server
 }

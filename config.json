@@ -1,0 +1,8 @@
+{
+  "https://github.com/k55k32/MessageWar": {
+    "secret": "your secret here",
+    "events": {
+      "push": "/root/msg-war-deply.sh"
+    }
+  }
+}
