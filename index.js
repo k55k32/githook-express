@@ -2,7 +2,7 @@ var express = require('express')
 var qs = require('querystring')
 var http = require('http')
 var url = require('url')
-var bodyParser = require('./body-parser')
+var bodyParser = require('./src/body-parser')
 var crypto = require('crypto')
 
 var app = express()
