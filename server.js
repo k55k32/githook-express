@@ -4,7 +4,7 @@ var http = require('http')
 var url = require('url')
 var bodyParser = require('./lib/body-parser')  //
 var utils = require('./lib/utils.js')
-
+var exec = require('child_process').exec
 
 
 function vaildHMAC (key, body, sign) {
@@ -37,7 +37,14 @@ module.exports = (port, config) => {
       var shell = executer.events[eventName]
       if (shell) { // 如果有该事件的shell，则继续执行并且签名通过
         if (vaildHMAC(secret, req._body, sign)) {
-          console.log(shell)
+          setTimeout(() => {
+            console.log('new thread execute shell', shell)
+            exec(shell, (err,stdout,stderr) => {
+              console.log('hasErr: ', err)
+              console.log('stdout: ', stdout)
+              console.log('stderr: ', stderr)
+            })
+          }, 500)
         } else {
           console.log('vaild sha1 error: ',secret , sign);
         }
