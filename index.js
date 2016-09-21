@@ -1,50 +1,20 @@
-var express = require('express')
-var qs = require('querystring')
-var http = require('http')
-var url = require('url')
-var bodyParser = require('./src/body-parser')
-var crypto = require('crypto')
+var program = require('commander')
+var Server = require('./server.js')
+program
+  .version('0.0.1')
+  .option('-s, --start <port> <secret>', 'start server and set the port,secret', start)
+  .option('-p, --stop', 'stop server', 'marble', stop)
+  .parse(process.argv)
 
-var app = express()
 
-function HMacSha1 (secret, body) {
-  var sign = crypto.createHmac('sha1', secret).update(body).digest().toString('hex')
-  console.log('shastr:', sign)
-  return sign
-}
-
-function vaildHMAC (key, body, sign) {
-  var shaStr = HMacSha1(key, body)
-  return shaStr === sign
-}
-
-app.use(bodyParser.json())
-app.all('*', (request, response, next) => {
-  console.log('requestpath:', request.path)
-  console.log('requestbody:', request.body)
-  next()
-})
-
-var hookSecret = 'testtest'
-app.post('/github/webhook', function (req, res) {
-  var eventName = req.get('X-GitHub-Event')
-  var sign = req.get('X-Hub-Signature')
-  var delivery = req.get('X-GitHub-Delivery')
-  console.log('request head')
-  console.log('request_body: ', req._body)
-  console.log('event:', eventName)
-  console.log('sign:', sign)
-  console.log('delivery', delivery)
-  if (vaildHMAC(hookSecret, req._body, sign)) {
-    console.log('vaild - success')
+var startServer = null
+function start (val) {
+  var port = parseInt(val[0])
+  var secret = val[1]
+  if (!port || !secret ) {
+    console.error('ERROR: require port and secret')
+  } else {
+    startServer = Server(port, secret)
+    console.log('start server port:%s secret:%s', port, secret)
   }
-  res.end()
-})
-
-
-
-var server = app.listen(9000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-  console.log('app listening at http://%s:%s', host, port);
-});
+}

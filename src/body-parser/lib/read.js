@@ -113,7 +113,7 @@ function read (req, res, next, parse, debug, options) {
       str = typeof body !== 'string' && encoding !== null
         ? iconv.decode(body, encoding)
         : body
-      req._body = str
+      req._body = str // parse 前的数据，这里用作github的加密验证
       req.body = parse(str)
     } catch (err) {
       err.body = str === undefined
