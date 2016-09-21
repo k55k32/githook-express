@@ -9,13 +9,19 @@ var app = express()
 app.use(bodyParser.json())
 app.all('*', (request, response, next) => {
   console.log('requestpath:', request.path)
-  console.log('requestbody:', request.body)
+  console.log('requestbody:', request.headers)
   next()
 })
 
 app.post('/github/webhook', function (req, res) {
+  var eventName = req.get('X-GitHub-Event')
+  var sign = req.get('X-Hub-Signature')
+  var delivery = req.get('X-GitHub-Delivery')
+  console.log('request head')
+  console.log('event:', eventName)
+  console.log('sign:', sign)
+  console.log('delivery', delivery)
   var body = req.body
-  console.log(body)
   res.end()
 })
 
