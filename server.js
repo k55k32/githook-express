@@ -12,7 +12,7 @@ function vaildHMAC (key, body, sign) {
   return shaStr === sign
 }
 
-module.exports = (port, config) => {
+module.exports = (port, configPath) => {
   var app = express()
   app.use(bodyParser.json())
   app.all('*', (request, response, next) => {
@@ -20,10 +20,11 @@ module.exports = (port, config) => {
     next()
   })
   app.post('/github/webhook', function (req, res) {
+    var config = utils.getConfig(configPath)
+    console.log('read config file:', config)
     var eventName = req.get('X-GitHub-Event')
     var sign = req.get('X-Hub-Signature')
     var delivery = req.get('X-GitHub-Delivery')
-    console.log()
     console.log(new Date(), ' [HOOK REQUEST]')
     console.log('event:', eventName)
     console.log('sign:', sign)

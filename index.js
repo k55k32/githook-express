@@ -14,15 +14,7 @@ function start (val) {
   if (!port || !configPath ) {
     console.error('ERROR: require port and configPath')
   } else {
-    var configString = fs.readFileSync(configPath, "utf-8")
-    if (configString) {
-      var config = JSON.parse(configString)
-      startServer = Server(port, config)
-      console.log('start config')
-      console.log(configString)
-      console.log('start server port:%s', port)
-    } else {
-      console.error(configPath , ' read file faild~')
-    }
+    startServer = Server(port, configPath)
+    console.log('using config: ', configPath)
   }
 }
