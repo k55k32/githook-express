@@ -41,9 +41,9 @@ module.exports = (port, configPath) => {
           setTimeout(() => {
             console.log('new thread execute shell', shell)
             exec(shell, (err,stdout,stderr) => {
-              console.log('hasErr: ', err)
-              console.log('stdout: ', stdout)
-              console.log('stderr: ', stderr)
+              err && console.log('hasErr: ', err)
+              stdout && console.log('stdout: ', stdout)
+              stderr && console.log('stderr: ', stderr)
             })
           }, 500)
         } else {
