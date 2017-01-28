@@ -28,12 +28,14 @@ module.exports = (port, configPath) => {
     console.log(new Date(), ' [HOOK REQUEST]')
     console.log('event:', eventName)
     console.log('sign:', sign)
-    console.log('delivery', delivery)
+    console.log('delivery:', delivery)
     var repositoryUrl = req.body.repository.url
+    var refHead = req.body.ref
+    console.log('push head', refHead)
     console.log('repositoryUrl: ', repositoryUrl)
     var executer = config[repositoryUrl]
     console.log('executer: ', executer)
-    if (executer) {
+    if (executer && refHead === 'refs/heads/master') {
       var secret = executer.secret
       var shell = executer.events[eventName]
       if (shell) { // 如果有该事件的shell，则继续执行并且签名通过
@@ -41,8 +43,13 @@ module.exports = (port, configPath) => {
           setTimeout(() => {
             console.log('new thread execute shell', shell)
             exec(shell, (err,stdout,stderr) => {
+              if (stdout) {
+                console.log('stdout out >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+                console.log(stdout)
+                console.log('stdout over >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+              }
+
               err && console.log('hasErr: ', err)
-              stdout && console.log('stdout: ', stdout)
               stderr && console.log('stderr: ', stderr)
             })
           }, 500)
